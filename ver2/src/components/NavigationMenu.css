@@ -1,0 +1,29 @@
+.filterButton {
+    background-color: #add8e6;
+    border: none;
+    color: rgb(3, 3, 3);
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 12px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 10px; 
+    transition: background-color 0.3s ease; 
+  }
+  
+  .filterButton:hover {
+    background-color: #87cefa; 
+  }
+  
+  .dropdownMenu {
+    position: absolute;
+    background-color: rgba(255, 255, 255, 0.9);
+    border: 1px solid #ddd;
+    padding: 10px;
+    border-radius: 5px; 
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2); 
+    z-index: 1; 
+  }
+  

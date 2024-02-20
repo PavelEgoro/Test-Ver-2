@@ -1,0 +1,32 @@
+.tableContainer {
+    width: 100%;
+    margin-top: 0;
+    margin-bottom: 20px;
+  }
+  
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  th, td {
+    border: 1px solid #ddd; 
+    text-align: left; 
+    padding: 8px; 
+  }
+  
+  th {
+    background-color: #f2f2f2; 
+  }
+  
+  .searchInput, .filterSelect {
+    padding: 5px;
+    margin: 5px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+  }
+  
+  .filterSelect {
+    background-color: #f8f8f8;
+  }
+  
