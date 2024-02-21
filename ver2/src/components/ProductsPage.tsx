@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Table from './Table';
 import { Product, Column } from '../Interfaces';
+import EditModal from './EditModal';
 
 const productsData: Product[] = [
   {
@@ -115,22 +116,56 @@ const productsData: Product[] = [
 ];
 
 const ProductsPage: React.FC = () => {
+  const [products, setProducts] = useState<Product[]>(productsData);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [currentProduct, setCurrentProduct] = useState<Product | null>(null);
+
   const [filter, setFilter] = useState('');
   const [activeFilter, setActiveFilter] = useState<'all' | 'active' | 'inactive'>('all');
 
-  const filteredData = productsData.filter(product => {
-    const matchesFilter = product.name.toLowerCase().includes(filter.toLowerCase());
-    if (activeFilter === 'all') {
-      return matchesFilter;
+  const handleEditClick = (product: Product) => {
+    setCurrentProduct(product);
+    setIsEditModalOpen(true);
+  };
+
+  const handleSave = (newName: string) => {
+    if (currentProduct) {
+      const updatedProducts = products.map((product) =>
+        product.id === currentProduct.id ? { ...product, name: newName } : product
+      );
+      setProducts(updatedProducts); 
+      setIsEditModalOpen(false);
+      setCurrentProduct(null); 
     }
-    return matchesFilter && ((activeFilter === 'active' && product.active) || (activeFilter === 'inactive' && !product.active));
+  };
+  
+
+
+  const filteredData = products.filter(product => {
+    const matchesFilter = product.name.toLowerCase().includes(filter.toLowerCase());
+    return matchesFilter && (activeFilter === 'all' || (activeFilter === 'active' && product.active) || (activeFilter === 'inactive' && !product.active));
   });
+
+  function formatDate(dateString: string | number | Date) {
+    const date = new Date(dateString);
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear();
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+  
+    return `${day}/${month}/${year}, ${hours}:${minutes}`;
+  }
+  
+  
 
   const columns: Column<Product>[] = [
     { key: 'name', title: 'Name' },
     { key: 'options', title: 'Options', render: (product) => `${product.options.size} / ${product.options.amount}` },
-    { key: 'active', title: 'Active', render: (product) => (product.active ? 'Active' : 'No active') },
-    { key: 'createdAt', title: 'Created' },
+    { key: 'active', title: 'Active', render: (product) => (product.active ? 'Active' : 'Inactive') },
+    { key: 'createdAt', title: 'Created', render: (page) => formatDate(page.createdAt) },
+    {key: 'actions',title: 'Actions',render: (product) => <button onClick={() => handleEditClick(product)}>Edit</button>,
+    },
   ];
 
   return (
@@ -148,6 +183,13 @@ const ProductsPage: React.FC = () => {
         <option value="inactive">Inactive</option>
       </select>
       <Table data={filteredData} columns={columns} />
+      {isEditModalOpen && currentProduct && (
+        <EditModal
+          initialName={currentProduct.name}
+          onSave={handleSave}
+          onClose={() => setIsEditModalOpen(false)}
+        />
+      )}
     </div>
   );
 };

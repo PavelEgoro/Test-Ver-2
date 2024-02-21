@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Table from './Table';
 import { Column, Page} from '../Interfaces';
+import EditModal from './EditModal';
 
 const pageData: Page[] = [
   {
@@ -76,23 +77,50 @@ const pageData: Page[] = [
 ];
 
 const PricePlansPage: React.FC = () => {
+  const [pages, setPages] = useState<Page[]>(pageData);
   const [filter, setFilter] = useState('');
   const [activeFilter, setActiveFilter] = useState<'all' | 'active' | 'inactive'>('all');
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState<Page | null>(null);
 
-  const filteredData = pageData.filter(page =>{
-    const matchesFilter = page.title.toLowerCase().includes(filter.toLowerCase())
-    if (activeFilter === 'all') {
-      return matchesFilter;
+  const handleEditClick = (page: Page) => {
+    setCurrentPage(page);
+    setIsEditModalOpen(true);
+  };
+
+  const handleSave = (newTitle: string) => {
+    if (currentPage) {
+      const updatedPages = pages.map((page) =>
+        page.id === currentPage.id ? { ...page, title: newTitle } : page
+      );
+      setPages(updatedPages);
+      setIsEditModalOpen(false);
+      setCurrentPage(null);
     }
-    return matchesFilter && ((activeFilter === 'active' && page.active) || (activeFilter === 'inactive' && !page.active));
+  };
+  
+  const filteredData = pages.filter(page => {
+    const matchesFilter = page.title.toLowerCase().includes(filter.toLowerCase());
+    return matchesFilter && (activeFilter === 'all' || (activeFilter === 'active' && page.active) || (activeFilter === 'inactive' && !page.active));
   });
 
-  const columns: Column<Page>[] = [
-    { key: 'title', title: 'Name' },
-    { key: 'active', title: 'Active', render: (product) => (product.active ? 'Active' : 'No active') },
-    { key: 'updatedAt', title: 'Created' },
-  ];
+  function formatDate(dateString: string | number | Date) {
+    const date = new Date(dateString);
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear();
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+  
+    return `${day}/${month}/${year}, ${hours}:${minutes}`;
+  }
 
+  const columns: Column<Page>[] = [
+    { key: 'title', title: 'Title' },
+    { key: 'active', title: 'Active', render: (page) => (page.active ? 'Active' : 'Inactive') },
+    { key: 'updatedAt', title: 'Updated At', render: (page) => formatDate(page.updatedAt)},
+    { key: 'actions', title: 'Actions', render: (page) => <button className="modalButton" onClick={() => handleEditClick(page)}>Edit</button> },
+  ];
   return (
     <div>
       <input
@@ -108,6 +136,13 @@ const PricePlansPage: React.FC = () => {
         <option value="inactive">Inactive</option>
       </select>
       <Table data={filteredData} columns={columns} />
+      {isEditModalOpen && currentPage && (
+        <EditModal
+          initialName={currentPage.title}
+          onSave={handleSave}
+          onClose={() => setIsEditModalOpen(false)}
+        />
+        )}
     </div>
   );
 };

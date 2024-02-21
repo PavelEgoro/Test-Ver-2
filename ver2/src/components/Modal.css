@@ -1,0 +1,48 @@
+.inputGroup {
+    margin-bottom: 20px; 
+  }
+
+  .buttonsGroup {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%; 
+  }
+
+.modalBackdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1050;
+  }
+  
+  .modalContent {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 2;
+  }
+  
+  .modalButton {
+    background-color: #add8e6; 
+    border: none;
+    color: white;
+    padding: 10px 15px;
+    margin: 10px 5px 0 0; 
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 12px;
+    
+  }
+  
+  .modalButton:hover {
+    background-color: #87cefa; 
+  }
+  
